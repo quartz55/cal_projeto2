@@ -1,67 +1,70 @@
 #include "legrep.h"
 
 #include <iostream>
+#include <unistd.h>
 
-LeGrep::LeGrep(string filename, string pattern, vector<string> *arguments)
+LeGrep::LeGrep(int argc, char *argv[])
 {
-    ignoreCase = false;
-    invertMatch = false;
-    afterContext.first = false;
-    afterContext.second = 0;
-    beforeContext.first = false;
-    beforeContext.second = 0;
-    file = NULL;
-
-    if (filename != "(null)") {
-        file = new LeFile(filename);
+    try {
+        this->args = new LeGrepArguments(argc, argv);
+    }
+    catch (LeGrepException &e) {
+        e.print();
     }
 
-    this->pattern = pattern;
-
-    if (arguments != NULL) {
-        setArguments(*arguments);
+    if (this->args->files.empty())
+        readInput();
+    else {
+        searchFiles();
     }
 }
 
-int LeGrep::searchFile()
+int LeGrep::searchFiles()
 {
-    if (file != NULL) {
-        int total = 0;
-        string str = this->pattern;
-        if (this->ignoreCase) str = LeGrep::stringToUpper(str);
+    int total = 0;
+    for (unsigned int i = 0; i < args->files.size(); i++) {
+        std::cout << "FILE: " << args->files[i].getName() << "\n";
+        string str = args->pattern;
+        if (args->ignoreCase) str = LeGrep::stringToUpper(str);
 
-        for (int i = 0; i < file->size(); i++) {
-            string line = file->getLine(i);
-            if (this->ignoreCase) line = LeGrep::stringToUpper(line);
+        for (int j = 0; j < args->files[i].size(); j++) {
+            string line = args->files[i].getLine(j);
+            if (args->ignoreCase) line = LeGrep::stringToUpper(line);
 
             vector<int> indexes = KMP(line, str);
             int found = indexes.size();
 
-            if ((found > 0 && !this->invertMatch) ||
-                (found == 0 && this->invertMatch))
-                std::cout << i+1 << ":" << file->getLine(i) << "\n";
+            if ((found > 0 && !args->invertMatch) ||
+                (found == 0 && args->invertMatch))
+                std::cout << j+1 << ":" << args->files[i].getLine(j) << "\n";
 
             total += found;
         }
-        return total;
     }
 
-    return -1;
+    return total;
+}
+
+void LeGrep::readInput()
+{
+    string line;
+    while(getline(cin, line))
+        searchLine(line);
 }
 
 int LeGrep::searchLine(string line)
 {
-    string str = this->pattern;
-    if (this->ignoreCase) str = LeGrep::stringToUpper(str);
+    string str = args->pattern;
+    if (args->ignoreCase) str = LeGrep::stringToUpper(str);
 
     string temp_line = line;
-    if (this->ignoreCase) temp_line = LeGrep::stringToUpper(temp_line);
+    if (args->ignoreCase) temp_line = LeGrep::stringToUpper(temp_line);
 
     vector<int> indexes = KMP(temp_line, str);
     int found = indexes.size();
 
-    if ((found > 0 && !this->invertMatch) ||
-        (found == 0 && this->invertMatch))
+    if ((found > 0 && !args->invertMatch) ||
+        (found == 0 && args->invertMatch))
         std::cout << line << "\n";
 
     return found;
@@ -69,15 +72,5 @@ int LeGrep::searchLine(string line)
 
 LeGrep::~LeGrep()
 {
-    delete(file);
-}
-
-void LeGrep::setArguments(vector<string> arguments)
-{
-    for (unsigned int i = 0; i < arguments.size(); i++) {
-        if (arguments[i] == "-i" || arguments[i] == "--ignore-case")
-            this->ignoreCase = true;
-        if (arguments[i] == "-v" || arguments[i] == "--invert-match")
-            this->invertMatch = true;
-    }
+    delete(args);
 }

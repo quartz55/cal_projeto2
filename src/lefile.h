@@ -10,10 +10,12 @@ using std::vector; using std::string;
 class LeFile
 {
 private:
+    string name;
     vector<string> lines;
 
 public:
     LeFile(string FILENAME);
+    string getName() const {return name;}
     void print() const {
         for (unsigned int i = 0; i < lines.size(); i++)
             std::cout << lines[i] << "\n";
