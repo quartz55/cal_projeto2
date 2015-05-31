@@ -24,9 +24,7 @@ int main(int argc, char *argv[])
 
     try {
         LeGrep grep(argc, argv);
-    }
-    catch (LeGrepException &e)
-    {
+    } catch (LeGrepException &e) {
         e.print();
         return 1;
     }
@@ -43,20 +41,22 @@ void printHelp(char *argv[])
 
     std::cout << "\n";
     std::cout << "Regexp selection and interpretation:\n";
-    std::cout
-        << "  -i, --ignore-case" << "\t\tignore case distinctions" << "\n"
-        ;
+    std::cout << "  -i, --ignore-case"
+              << "\t\tignore case distinctions"
+              << "\n";
 
     std::cout << "\n";
     std::cout << "Miscellaneous:\n";
-    std::cout
-        << "  -v, --invert-match" << "\t\tselect non-matching lines" <<  "\n"
-        ;
+    std::cout << "  -v, --invert-match"
+              << "\t\tselect non-matching lines"
+              << "\n";
 
     std::cout << "\n";
     std::cout << "Context control:\n";
-    std::cout
-        << "  -B NUM, --before-context=NUM" << "\tprint NUM lines of leading context" << "\n"
-        << "  -A NUM, --after-context=NUM" << "\tprint NUM lines of trailing context" << "\n"
-        ;
+    std::cout << "  -B NUM, --before-context=NUM"
+              << "\tprint NUM lines of leading context"
+              << "\n"
+              << "  -A NUM, --after-context=NUM"
+              << "\tprint NUM lines of trailing context"
+              << "\n";
 }

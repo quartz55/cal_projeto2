@@ -17,13 +17,22 @@ class LeFile
 
    public:
     LeFile() : name("") {}
+    /**
+     * Constructor
+     * Opens the file specified in 'FILENAME'
+     * If successful, adds every line in the file to 'lines' vector
+     * If not successful, throws string exception with the 'FILENAME'
+     * @param FILENAME File name to open
+     */
     LeFile(string FILENAME);
-    string getName() const { return name; }
+
     void print() const
     {
         for (unsigned int i = 0; i < lines.size(); i++)
             std::cout << lines[i] << "\n";
     }
+
+    string getName() const { return name; }
     string getLine(int i) const { return lines[i]; }
     int size() const { return lines.size(); }
     bool empty() const { return lines.empty() && name != ""; }
