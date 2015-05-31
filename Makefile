@@ -1,6 +1,7 @@
 MY_CFLAGS =
 MY_LIBS   =
-CPPFLAGS  = -Wall -g -O0
+DEBUG     = -g -O0
+CPPFLAGS  = -Wall -O3 $(DEBUG)
 LDFLAGS   =
 SRCDIRS   = ./src
 PROGRAM   = legrep
@@ -21,10 +22,7 @@ CXXFLAGS= -g
 CC     = gcc
 
 # The C++ program compiler.
-CXX    = clang++
-
-# Un-comment the following line to compile C programs as C++ ones.
-#CC     = $(CXX)
+CXX    = g++
 
 # The command used to delete file.
 RM     = rm -rf
@@ -35,6 +33,7 @@ ETAGSFLAGS =
 CTAGS = ctags
 CTAGSFLAGS =
 
+##==========================================================================
 ## Stable Section: usually no need to be changed. But you can add more.
 ##==========================================================================
 SHELL   = /bin/sh
@@ -161,14 +160,8 @@ ifneq ($(DEPS),)
 endif
 endif
 
-clean:
+cl:
 	$(RM) $(OBJS) $(PROGRAM) $(PROGRAM).exe
 
-distclean: clean
+clean: cl
 	$(RM) $(DEPS) TAGS
-
-# Show help.
-help:
-
-# Show variables (for debug use only.)
-show:
