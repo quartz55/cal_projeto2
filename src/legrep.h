@@ -22,7 +22,7 @@ public:
         this->message = message;
     }
     void print(){
-        std::cerr << "#LE_GREP_EXCEPTION# " << arg << " " << message << "\n";
+        std::cerr << "\n#LE_GREP_EXCEPTION# " << arg << " " << message << "\n";
     }
 
 };
@@ -88,12 +88,16 @@ inline LeGrepArguments::LeGrepArguments(int argc, char **argv)
         std::cout << "Pattern: " << this->pattern << "\n";
         while (optind < argc){
             std::cout << argv[optind] << " ";
+            LeFile temp;
             try{
-                this->files.push_back(LeFile(argv[optind]));
+                temp = LeFile(argv[optind]);
             }
             catch (string &s) {
-                throw LeGrepException("[FILE]", s);
+                throw LeGrepException("'"+s+"'", "file NOT found");
             }
+            if (!temp.empty())
+                this->files.push_back(temp);
+
             ++optind;
         }
         std::cout << "\n";

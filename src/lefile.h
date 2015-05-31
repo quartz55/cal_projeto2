@@ -14,6 +14,7 @@ private:
     vector<string> lines;
 
 public:
+    LeFile():name(""){}
     LeFile(string FILENAME);
     string getName() const {return name;}
     void print() const {
@@ -22,6 +23,7 @@ public:
     }
     string getLine(int i) const {return lines[i];}
     int size() const {return lines.size();}
+    bool empty() const {return lines.empty() && name != "";}
 };
 
 #endif /* LEFILE_H */

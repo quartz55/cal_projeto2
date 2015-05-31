@@ -1,7 +1,7 @@
 #include "legrep.h"
 
 #include <iostream>
-#include <unistd.h>
+#include <sstream>
 
 LeGrep::LeGrep(int argc, char *argv[])
 {
@@ -9,7 +9,7 @@ LeGrep::LeGrep(int argc, char *argv[])
         this->args = new LeGrepArguments(argc, argv);
     }
     catch (LeGrepException &e) {
-        e.print();
+        throw e;
     }
 
     if (this->args->files.empty())
@@ -35,8 +35,41 @@ int LeGrep::searchFiles()
             int found = indexes.size();
 
             if ((found > 0 && !args->invertMatch) ||
-                (found == 0 && args->invertMatch))
-                std::cout << j+1 << ":" << args->files[i].getLine(j) << "\n";
+                (found == 0 && args->invertMatch)) {
+                string line = args->files[i].getLine(j);
+
+                // Lines before
+                if (args->beforeContext.first) {
+                    int bContext = args->beforeContext.second;
+                    for (; bContext > 0; --bContext) {
+                        if (j-bContext < 0) continue;
+                        std::cout << j-bContext + 1 << ": " << args->files[i].getLine(j-bContext) << "\n";
+                    }
+                }
+
+                // Show line
+                std::cout << j+1 << ": " << line << "\n";
+
+                // Show position
+                if (!args->invertMatch) {
+                    std::stringstream helper;
+                    helper << j+1 << ": ";
+                    string s(line.length() + helper.str().length(), ' ');
+                    for(unsigned int k = 0; k < indexes.size(); k++)
+                        s[indexes[k]+helper.str().length()] = '^';
+                    std::cout << s << "\n";
+                }
+
+                // Lines after
+                if (args->afterContext.first) {
+                    int aContext = 1;
+                    for (; aContext <= args->afterContext.second; ++aContext) {
+                        if (j+aContext >= args->files[i].size()) break;
+                        std::cout << j+aContext + 1 << ": " << args->files[i].getLine(j+aContext) << "\n";
+                    }
+                }
+
+            }
 
             total += found;
         }

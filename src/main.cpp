@@ -13,7 +13,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    LeGrep grep(argc, argv);
+    try {
+        LeGrep grep(argc, argv);
+    }
+    catch (LeGrepException &e)
+    {
+        e.print();
+        return 1;
+    }
 
     return 0;
 }
